@@ -12,6 +12,7 @@ type Task = {
   text: string;
   completed: boolean;
   color: string;
+  dueDate: string;
 };
 
 interface TaskItemProps {
@@ -19,12 +20,14 @@ interface TaskItemProps {
   editing: boolean;
   editText: string;
   editColor: string;
+  editDueDate?: string;
   COLORS: string[];
   onToggleComplete: (id: string) => void;
   onDelete: (id: string) => void;
   onStartEdit: (task: Task) => void;
   onEditTextChange: (text: string) => void;
   onEditColorChange: (color: string) => void;
+  onEditDueDateChange?: (date: string) => void;
   onSaveEdit: () => void;
   onCancelEdit: () => void;
 }
@@ -34,12 +37,14 @@ export function TaskItem({
   editing,
   editText,
   editColor,
+  editDueDate,
   COLORS,
   onToggleComplete,
   onDelete,
   onStartEdit,
   onEditTextChange,
   onEditColorChange,
+  onEditDueDateChange,
   onSaveEdit,
   onCancelEdit,
 }: TaskItemProps) {
@@ -71,6 +76,27 @@ export function TaskItem({
             />
           ))}
         </View>
+        {onEditDueDateChange && (
+          <View
+            style={{
+              flexDirection: "row",
+              alignItems: "center",
+              marginBottom: 8,
+            }}
+          >
+            <Text style={{ fontSize: 14, color: "#666", marginRight: 8 }}>
+              Due:
+            </Text>
+            <TextInput
+              style={[styles.editInput, { maxWidth: 120 }]}
+              value={editDueDate}
+              onChangeText={onEditDueDateChange}
+              placeholder="YYYY-MM-DD"
+              keyboardType="numeric"
+              maxLength={10}
+            />
+          </View>
+        )}
         <TouchableOpacity
           style={styles.saveBtn}
           onPress={onSaveEdit}
@@ -107,11 +133,16 @@ export function TaskItem({
       >
         {item.completed && <Text style={styles.checkMark}>✓</Text>}
       </TouchableOpacity>
-      <Text
-        style={[styles.taskText, item.completed && styles.taskTextCompleted]}
-      >
-        {item.text}
-      </Text>
+      <View style={{ flex: 1 }}>
+        <Text
+          style={[styles.taskText, item.completed && styles.taskTextCompleted]}
+        >
+          {item.text}
+        </Text>
+        <Text style={{ fontSize: 13, color: "#888", marginTop: 2 }}>
+          Due: {item.dueDate}
+        </Text>
+      </View>
       <TouchableOpacity
         onPress={() => onStartEdit(item)}
         accessibilityLabel="Edit task"

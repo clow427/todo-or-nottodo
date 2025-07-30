@@ -17,15 +17,29 @@ type Task = {
   text: string;
   completed: boolean;
   color: string;
+  dueDate: string; // ISO string
 };
+
+function getFormattedDate() {
+  const now = new Date();
+  return now.toLocaleDateString(undefined, {
+    year: "numeric",
+    month: "short",
+    day: "numeric",
+  });
+}
 
 export default function HomeScreen() {
   const [tasks, setTasks] = useState<Task[]>([]);
   const [input, setInput] = useState("");
   const [color, setColor] = useState<string>("#007bff");
+  const [dueDate, setDueDate] = useState<string>(
+    new Date().toISOString().slice(0, 10)
+  );
   const [editingId, setEditingId] = useState<string | null>(null);
   const [editText, setEditText] = useState("");
   const [editColor, setEditColor] = useState<string>("#007bff");
+  const [editDueDate, setEditDueDate] = useState<string>("");
 
   const addTask = () => {
     if (!input.trim()) {
@@ -39,16 +53,19 @@ export default function HomeScreen() {
         text: input.trim(),
         completed: false,
         color,
+        dueDate,
       },
     ]);
     setInput("");
     setColor("#007bff");
+    setDueDate(new Date().toISOString().slice(0, 10));
     Keyboard.dismiss();
   };
   const startEdit = (task: Task) => {
     setEditingId(task.id);
     setEditText(task.text);
     setEditColor(task.color);
+    setEditDueDate(task.dueDate);
   };
 
   const saveEdit = () => {
@@ -59,13 +76,19 @@ export default function HomeScreen() {
     setTasks((prev: Task[]) =>
       prev.map((task: Task) =>
         task.id === editingId
-          ? { ...task, text: editText.trim(), color: editColor }
+          ? {
+              ...task,
+              text: editText.trim(),
+              color: editColor,
+              dueDate: editDueDate,
+            }
           : task
       )
     );
     setEditingId(null);
     setEditText("");
     setEditColor("#007bff");
+    setEditDueDate("");
     Keyboard.dismiss();
   };
 
@@ -73,6 +96,7 @@ export default function HomeScreen() {
     setEditingId(null);
     setEditText("");
     setEditColor("#007bff");
+    setEditDueDate("");
   };
 
   const toggleComplete = (id: string) => {
@@ -95,12 +119,14 @@ export default function HomeScreen() {
       editing={editingId === item.id}
       editText={editText}
       editColor={editColor}
+      editDueDate={editDueDate}
       COLORS={COLORS}
       onToggleComplete={toggleComplete}
       onDelete={deleteTask}
       onStartEdit={startEdit}
       onEditTextChange={setEditText}
       onEditColorChange={setEditColor}
+      onEditDueDateChange={setEditDueDate}
       onSaveEdit={saveEdit}
       onCancelEdit={cancelEdit}
     />
@@ -108,7 +134,10 @@ export default function HomeScreen() {
 
   return (
     <View style={styles.container}>
-      <Text style={styles.title}>Todo List</Text>
+      <View style={styles.headerRow}>
+        <Text style={styles.title}>Todo List</Text>
+        <Text style={styles.date}>{getFormattedDate()}</Text>
+      </View>
       <View style={styles.inputRow}>
         <TextInput
           style={styles.input}
@@ -117,6 +146,7 @@ export default function HomeScreen() {
           onChangeText={setInput}
           onSubmitEditing={addTask}
           returnKeyType="done"
+          selectionColor={"#007bff"}
         />
         <TouchableOpacity
           style={styles.addBtn}
@@ -125,6 +155,17 @@ export default function HomeScreen() {
         >
           <Text style={styles.addBtnText}>Add</Text>
         </TouchableOpacity>
+      </View>
+      <View style={styles.inputRow}>
+        <Text style={styles.dueDateLabel}>Due:</Text>
+        <TextInput
+          style={styles.dueDateInput}
+          value={dueDate}
+          onChangeText={setDueDate}
+          placeholder="YYYY-MM-DD"
+          keyboardType="numeric"
+          maxLength={10}
+        />
       </View>
       <ColorPicker colors={COLORS} selected={color} onSelect={setColor} />
       <FlatList
@@ -145,12 +186,23 @@ const styles = StyleSheet.create({
     paddingTop: 60,
     paddingHorizontal: 20,
   },
+  headerRow: {
+    flexDirection: "row",
+    alignItems: "center",
+    justifyContent: "space-between",
+    marginBottom: 20,
+  },
   title: {
     fontSize: 32,
     fontWeight: "bold",
-    marginBottom: 20,
     color: "#222",
-    alignSelf: "center",
+    textAlign: "left",
+  },
+  date: {
+    fontSize: 16,
+    color: "#666",
+    textAlign: "right",
+    marginLeft: 12,
   },
   inputRow: {
     flexDirection: "row",
@@ -285,5 +337,23 @@ const styles = StyleSheet.create({
     color: "#aaa",
     marginTop: 40,
     fontSize: 16,
+  },
+  dueDateLabel: {
+    fontSize: 16,
+    color: "#666",
+    marginRight: 8,
+    alignSelf: "center",
+  },
+  dueDateInput: {
+    flex: 1,
+    borderWidth: 1,
+    borderColor: "#ccc",
+    borderRadius: 8,
+    paddingHorizontal: 12,
+    paddingVertical: 8,
+    fontSize: 16,
+    backgroundColor: "#f9f9f9",
+    minWidth: 120,
+    maxWidth: 160,
   },
 });
