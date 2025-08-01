@@ -173,6 +173,9 @@ const styles = StyleSheet.create({
     shadowOffset: { width: 0, height: 1 },
     elevation: 1,
     minHeight: 56,
+    alignSelf: "stretch",
+    marginLeft: 0,
+    marginRight: 0,
   },
   colorRow: {
     flexDirection: "row",

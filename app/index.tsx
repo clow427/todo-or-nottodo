@@ -112,7 +112,7 @@ export default function HomeScreen() {
     setTasks((prev: Task[]) => prev.filter((task: Task) => task.id !== id));
   };
 
-  const COLORS = ["#007bff", "#28a745", "#ffc107", "#dc3545", "#6f42c1"];
+  const COLORS = ["#28a745", "#ffc107", "#dc3545"]; // green, yellow, red
 
   // Sort tasks by due date
   const sortedTasks = [...tasks].sort((a, b) => {
@@ -230,24 +230,30 @@ const styles = StyleSheet.create({
   },
   inputRow: {
     flexDirection: "row",
-    marginBottom: 20,
+    alignItems: "center",
+    marginBottom: 16,
+    gap: 4,
   },
   input: {
     flex: 1,
     borderWidth: 1,
     borderColor: "#ccc",
     borderRadius: 8,
-    paddingHorizontal: 12,
-    paddingVertical: 8,
-    fontSize: 16,
+    paddingHorizontal: 8,
+    paddingVertical: 6,
+    fontSize: 15,
     backgroundColor: "#f9f9f9",
+    minWidth: 0,
   },
   addBtn: {
-    marginLeft: 10,
+    marginLeft: 4,
     backgroundColor: "#007bff",
     borderRadius: 8,
-    paddingHorizontal: 16,
+    paddingHorizontal: 10,
+    paddingVertical: 6,
     justifyContent: "center",
+    minWidth: 48,
+    alignItems: "center",
   },
   addBtnText: {
     color: "#fff",
