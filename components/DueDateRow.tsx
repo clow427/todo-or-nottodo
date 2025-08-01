@@ -1,3 +1,4 @@
+// DueDateRow: Handles due date input and sort toggle
 import React from "react";
 import {
   StyleSheet,
@@ -7,6 +8,7 @@ import {
   View,
 } from "react-native";
 
+// Props for DueDateRow
 interface DueDateRowProps {
   dueDate: string;
   setDueDate: (date: string) => void;
@@ -14,12 +16,14 @@ interface DueDateRowProps {
   setSortAsc: (cb: (asc: boolean) => boolean) => void;
 }
 
+// DueDateRow component for due date and sort order
 export const DueDateRow: React.FC<DueDateRowProps> = ({
   dueDate,
   setDueDate,
   sortAsc,
   setSortAsc,
 }) => (
+  // Layout for due date input and sort button
   <View style={styles.dueDateRow}>
     <View style={{ flex: 1 }} />
     <Text style={styles.dueDateLabel}>Due:</Text>

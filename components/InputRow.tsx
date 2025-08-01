@@ -1,3 +1,4 @@
+// InputRow: Handles new task input, color selection, and add button
 import React from "react";
 import {
   StyleSheet,
@@ -8,6 +9,7 @@ import {
 } from "react-native";
 import { ColorPicker } from "./ColorPicker";
 
+// Props for InputRow
 interface InputRowProps {
   input: string;
   setInput: (text: string) => void;
@@ -17,6 +19,7 @@ interface InputRowProps {
   COLORS: string[];
 }
 
+// InputRow component for adding new tasks
 export const InputRow: React.FC<InputRowProps> = ({
   input,
   setInput,
@@ -25,6 +28,7 @@ export const InputRow: React.FC<InputRowProps> = ({
   setColor,
   COLORS,
 }) => (
+  // Layout for input, color picker, and add button
   <View style={styles.inputRow}>
     <TextInput
       style={styles.input}

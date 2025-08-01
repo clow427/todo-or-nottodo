@@ -1,3 +1,5 @@
+// Main entry point for the Todo List app screen
+// Handles state, logic, and layout for tasks, input, and sorting
 import React, { useState } from "react";
 import {
   Alert,
@@ -11,6 +13,7 @@ import { DueDateRow } from "../components/DueDateRow";
 import { InputRow } from "../components/InputRow";
 import { TaskItem } from "../components/TaskItem";
 
+// Task type definition
 type Task = {
   id: string;
   text: string;
@@ -19,6 +22,7 @@ type Task = {
   dueDate: string; // ISO string
 };
 
+// Returns today's date in a readable format for the header
 function getFormattedDate() {
   const now = new Date();
   return now.toLocaleDateString(undefined, {
@@ -29,18 +33,25 @@ function getFormattedDate() {
 }
 
 export default function HomeScreen() {
+  // State for all tasks
   const [tasks, setTasks] = useState<Task[]>([]);
+  // State for new task input
   const [input, setInput] = useState("");
+  // State for selected color for new task
   const [color, setColor] = useState<string>("#007bff");
+  // State for due date for new task
   const [dueDate, setDueDate] = useState<string>(
     new Date().toISOString().slice(0, 10)
   );
+  // State for editing task
   const [editingId, setEditingId] = useState<string | null>(null);
   const [editText, setEditText] = useState("");
   const [editColor, setEditColor] = useState<string>("#007bff");
   const [editDueDate, setEditDueDate] = useState<string>("");
+  // State for sorting order
   const [sortAsc, setSortAsc] = useState(true);
 
+  // Add a new task to the list
   const addTask = () => {
     if (!input.trim()) {
       Alert.alert("Task cannot be empty");
@@ -59,15 +70,19 @@ export default function HomeScreen() {
     setInput("");
     setColor("#007bff");
     setDueDate(new Date().toISOString().slice(0, 10));
+    // Begin editing a task
     Keyboard.dismiss();
   };
+  // Begin editing a task
   const startEdit = (task: Task) => {
     setEditingId(task.id);
     setEditText(task.text);
     setEditColor(task.color);
+    // Save edits to a task
     setEditDueDate(task.dueDate);
   };
 
+  // Save edits to a task
   const saveEdit = () => {
     if (!editText.trim()) {
       Alert.alert("Task cannot be empty");
@@ -88,32 +103,42 @@ export default function HomeScreen() {
     setEditingId(null);
     setEditText("");
     setEditColor("#007bff");
+    // Cancel editing a task
     setEditDueDate("");
     Keyboard.dismiss();
   };
 
+  // Cancel editing a task
   const cancelEdit = () => {
     setEditingId(null);
+    // Toggle completion status of a task
     setEditText("");
     setEditColor("#007bff");
     setEditDueDate("");
   };
 
+  // Toggle completion status of a task
   const toggleComplete = (id: string) => {
     setTasks((prev: Task[]) =>
+      // Delete a task from the list
       prev.map((task: Task) =>
         task.id === id ? { ...task, completed: !task.completed } : task
       )
     );
+    // Available color options for tasks
   };
 
+  // Sort tasks by due date (ascending or descending)
+  // Delete a task from the list
   const deleteTask = (id: string) => {
     setTasks((prev: Task[]) => prev.filter((task: Task) => task.id !== id));
   };
 
-  const COLORS = ["#28a745", "#ffc107", "#dc3545"]; // green, yellow, red
+  // Available color options for tasks
+  const COLORS = ["#007bff", "#ffc107", "#dc3545"]; // blue, yellow, red
+  // Render a single task item (edit or view mode)
 
-  // Sort tasks by due date
+  // Sort tasks by due date (ascending or descending)
   const sortedTasks = [...tasks].sort((a, b) => {
     if (a.dueDate === b.dueDate) return 0;
     return sortAsc
@@ -121,6 +146,7 @@ export default function HomeScreen() {
       : b.dueDate.localeCompare(a.dueDate);
   });
 
+  // Render a single task item (edit or view mode)
   const renderItem = ({ item }: { item: Task }) => (
     <TaskItem
       item={item}
@@ -130,6 +156,7 @@ export default function HomeScreen() {
       editDueDate={editDueDate}
       COLORS={COLORS}
       onToggleComplete={toggleComplete}
+      // Main layout: header, input, due date, and task list
       onDelete={deleteTask}
       onStartEdit={startEdit}
       onEditTextChange={setEditText}
@@ -140,13 +167,16 @@ export default function HomeScreen() {
     />
   );
 
+  // Main layout: header, input, due date, and task list
   return (
     <View style={styles.container}>
+      {/* Header with title and today's date */}
       <View style={styles.headerRow}>
         <Text style={styles.title}>Todo List</Text>
         <Text style={styles.date}>{getFormattedDate()}</Text>
       </View>
 
+      {/* Input row for adding new tasks */}
       <InputRow
         input={input}
         setInput={setInput}
@@ -156,6 +186,7 @@ export default function HomeScreen() {
         COLORS={COLORS}
       />
 
+      {/* Row for due date input and sort toggle */}
       <DueDateRow
         dueDate={dueDate}
         setDueDate={setDueDate}
@@ -163,6 +194,7 @@ export default function HomeScreen() {
         setSortAsc={setSortAsc}
       />
 
+      {/* List of tasks */}
       <FlatList
         data={sortedTasks}
         keyExtractor={(item) => item.id}
@@ -174,6 +206,7 @@ export default function HomeScreen() {
   );
 }
 
+// Styles for the main screen layout and elements
 const styles = StyleSheet.create({
   container: {
     flex: 1,
