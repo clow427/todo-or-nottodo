@@ -20,7 +20,7 @@ This is a simple and modern Todo List app built with Expo and React Native. It h
 
 All your tasks are managed locally on your device.
 
-# Welcome to your Expo app 👋
+## Welcome to your Expo app 👋
 
 This is an [Expo](https://expo.dev) project created with [`create-expo-app`](https://www.npmjs.com/package/create-expo-app).
 
@@ -35,7 +35,7 @@ This is an [Expo](https://expo.dev) project created with [`create-expo-app`](htt
 2. Start the app
 
    ```bash
-   npx expo start
+   npx run start
    ```
 
 In the output, you'll find options to open the app in a
