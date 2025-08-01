@@ -40,6 +40,7 @@ export default function HomeScreen() {
   const [editText, setEditText] = useState("");
   const [editColor, setEditColor] = useState<string>("#007bff");
   const [editDueDate, setEditDueDate] = useState<string>("");
+  const [sortAsc, setSortAsc] = useState(true);
 
   const addTask = () => {
     if (!input.trim()) {
@@ -113,6 +114,14 @@ export default function HomeScreen() {
 
   const COLORS = ["#007bff", "#28a745", "#ffc107", "#dc3545", "#6f42c1"];
 
+  // Sort tasks by due date
+  const sortedTasks = [...tasks].sort((a, b) => {
+    if (a.dueDate === b.dueDate) return 0;
+    return sortAsc
+      ? a.dueDate.localeCompare(b.dueDate)
+      : b.dueDate.localeCompare(a.dueDate);
+  });
+
   const renderItem = ({ item }: { item: Task }) => (
     <TaskItem
       item={item}
@@ -138,6 +147,7 @@ export default function HomeScreen() {
         <Text style={styles.title}>Todo List</Text>
         <Text style={styles.date}>{getFormattedDate()}</Text>
       </View>
+
       <View style={styles.inputRow}>
         <TextInput
           style={styles.input}
@@ -148,6 +158,9 @@ export default function HomeScreen() {
           returnKeyType="done"
           selectionColor={"#007bff"}
         />
+        <View style={styles.inlineColorPicker}>
+          <ColorPicker colors={COLORS} selected={color} onSelect={setColor} />
+        </View>
         <TouchableOpacity
           style={styles.addBtn}
           onPress={addTask}
@@ -156,7 +169,9 @@ export default function HomeScreen() {
           <Text style={styles.addBtnText}>Add</Text>
         </TouchableOpacity>
       </View>
-      <View style={styles.inputRow}>
+
+      <View style={styles.dueDateRow}>
+        <View style={{ flex: 1 }} />
         <Text style={styles.dueDateLabel}>Due:</Text>
         <TextInput
           style={styles.dueDateInput}
@@ -166,10 +181,19 @@ export default function HomeScreen() {
           keyboardType="numeric"
           maxLength={10}
         />
+        <View style={styles.sortRow}>
+          <TouchableOpacity
+            style={styles.sortBtn}
+            onPress={() => setSortAsc((asc) => !asc)}
+            accessibilityLabel="Toggle sort order"
+          >
+            <Text style={styles.sortBtnText}>{sortAsc ? "↑" : "↓"}</Text>
+          </TouchableOpacity>
+        </View>
       </View>
-      <ColorPicker colors={COLORS} selected={color} onSelect={setColor} />
+
       <FlatList
-        data={tasks}
+        data={sortedTasks}
         keyExtractor={(item) => item.id}
         renderItem={renderItem}
         contentContainerStyle={styles.list}
@@ -229,6 +253,28 @@ const styles = StyleSheet.create({
     color: "#fff",
     fontWeight: "bold",
     fontSize: 16,
+  },
+  sortRow: {
+    flexDirection: "row",
+    justifyContent: "flex-end",
+    alignItems: "center",
+    marginBottom: 8,
+  },
+  sortBtn: {
+    marginLeft: 8,
+    backgroundColor: "#e9ecef",
+    borderRadius: 16,
+    paddingHorizontal: 10,
+    paddingVertical: 4,
+    justifyContent: "center",
+    alignItems: "center",
+    height: 28,
+    minWidth: 28,
+  },
+  sortBtnText: {
+    color: "#555",
+    fontSize: 16,
+    fontWeight: "bold",
   },
   list: {
     paddingBottom: 40,
@@ -337,6 +383,17 @@ const styles = StyleSheet.create({
     color: "#aaa",
     marginTop: 40,
     fontSize: 16,
+  },
+  inlineColorPicker: {
+    marginHorizontal: 4,
+    alignSelf: "center",
+  },
+  dueDateRow: {
+    flexDirection: "row",
+    justifyContent: "flex-end",
+    alignItems: "center",
+    marginBottom: 20,
+    marginTop: -10,
   },
   dueDateLabel: {
     fontSize: 16,
